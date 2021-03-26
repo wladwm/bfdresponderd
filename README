@@ -1,0 +1,8 @@
+README for bfdresponderd
+*******************
+
+bfdresponderd is an open source package that provides a software based 
+implementation of the Bidirectional Forwarding Detection (BFD) protocol. 
+At this time - only passive asyncronious.
+It will simply establish BFD session to any incoming request, setting discriminator to incoming+1.
+This software allows host failure detection for routers using standard hardware/software trackers for anycast static routes. So you can make georeserved services based on L3, without L2 VRRP/CARP, which have well-known flaws.
