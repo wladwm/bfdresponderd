@@ -1,0 +1,68 @@
+Installation Instructions For bfdresponderd
+*************************
+
+1. Build:
+
+   ./configure ; make
+   
+2. Install binary
+sudo make install
+
+3. 
+Simply run (it will fork): bfdresponderd
+-- or --
+Configure systemd unit: 
+cat <<EOF >/etc/systemd/system/bfdresponder.service
+[Unit]
+Description=BFD responder service
+After=network.target
+
+[Service]
+Type=simple
+User=daemon
+Group=daemon
+ExecStart=/usr/local/bin/bfdresponderd -f
+KillSignal=SIGTERM
+TimeoutStopSec=5
+KillMode=process
+PrivateTmp=true
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl --daemon-reload
+systemctl enable bfdresponder.service
+systemctl start bfdresponder.service
+
+4. Configure BFD session on router:
+
+Juniper:
+routing-options {
+ static {
+  route 1.1.1.1/32 {
+    next-hop 2.2.2.2;
+    bfd-liveness-detection {
+        version 1;
+        minimum-interval 1000;
+        minimum-receive-interval 1000;
+        multiplier 3;
+        transmit-interval {
+            minimum-interval 1000;
+        }
+        neighbor 2.2.2.2;
+        local-address 1.0.0.0;
+    }
+    resolve;
+  }
+ }
+}
+
+Huawei:
+bfd host1 bind peer-ip 2.2.2.2 source-ip 1.0.0.0 auto
+ min-tx-interval 1000
+ min-rx-interval 1000
+ commit
+#
+
