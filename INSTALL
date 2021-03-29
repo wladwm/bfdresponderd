@@ -1,6 +1,11 @@
 Installation Instructions For bfdresponderd
 *************************
 
+0. Pre-Configure
+aclocal
+automake --add-missing
+autoconf
+
 1. Build:
 
    ./configure ; make
