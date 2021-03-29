@@ -35,6 +35,9 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 #include <set>
 #include <map>
 #include <iostream>
@@ -337,7 +340,7 @@ int BfdDispatcher::add_listen(const IpAddrPort &addrport)
   memset(&bindaddr, 0, sizeof(bindaddr));
   bindaddr.sin_family = AF_INET;
   addrport.setAddrPortTo(&bindaddr);
-  if (bind(iSocket, (struct sockaddr *)&bindaddr, sizeof(struct sockaddr_in)) < 0)
+  if (::bind(iSocket, (struct sockaddr *)&bindaddr, sizeof(struct sockaddr_in)))
   {
     err = errno;
     perror("Unable to bind");
@@ -608,3 +611,4 @@ int main(int argc, char **argv)
     unlink(szPidFile);
   return 0;
 }
+
