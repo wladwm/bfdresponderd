@@ -106,12 +106,14 @@ public:
 };
 IpAddrPort::IpAddrPort(const char *s) : port(0)
 {
+  char host[256];
   if (!s)
     return;
   const char *q;
   for (q = s; *q && *q != ':'; q++)
     ;
-  addr = IpAddr(s);
+  strncpy(host,s,q-s);
+  addr = IpAddr(host);
   if (*q == ':')
   {
     port = strtol(q + 1, 0, 10);
@@ -440,6 +442,7 @@ void BfdDispatcher::lifecycle()
     {
       if (fds[fdn].revents & POLLIN)
       {
+        rcvd_len = sizeof(rcvd_addr);
         szRcv = recvfrom(fds[fdn].fd, szBuf, sizeof(szBuf), 0 /*MSG_WAITALL | MSG_TRUNC*/, (sockaddr *)&rcvd_addr, &rcvd_len);
         if (szRcv < 0)
         {
